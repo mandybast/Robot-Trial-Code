@@ -1,17 +1,25 @@
-#include <Servo.h> // include the Servo library
-
-// create the servo objects
-Servo leftMotor;
-Servo rightMotor;
-
-void setup()
-{
-  leftMotor.attach(10);  // attaches the servo on pin 10 to a servo object
-  rightMotor.attach(9); // attaches the servo on pin 9 to a servo object
-}
-
-void loop()
-{
-  leftMotor.write(180);  // left motor is going in the wrong direction 
-  rightMotor.write(0);  // Have to code opposite for left motor 
-}
+#include <Servo.h> 
+ 
+Servo GripMotor;  // create servo object to control a servo 
+                // twelve servo objects can be created on most boards
+ 
+int pos = 0;    // variable to store the servo position 
+ 
+void setup() 
+{ 
+  GripMotor.attach(10);  // attaches the servo on pin 9 to the servo object 
+} 
+ 
+void loop() 
+{ 
+  for(pos = 0; pos <= 180; pos += 1) // goes from 0 degrees to 180 degrees 
+  {                                  // in steps of 1 degree 
+    GripMotor.write(pos);              // tell servo to go to position in variable 'pos' 
+    delay(15);                       // waits 15ms for the servo to reach the position 
+  } 
+  for(pos = 180; pos>=0; pos-=1)     // goes from 180 degrees to 0 degrees 
+  {                                
+    GripMotor.write(pos);              // tell servo to go to position in variable 'pos' 
+    delay(15);                       // waits 15ms for the servo to reach the position 
+  } 
+} 
