@@ -5,11 +5,11 @@
  *  Modified June 2009 by Michael Polli and Jesse Tane to fix a bug in setPeriod() which caused the timer to stop
  *  Modified April 2012 by Paul Stoffregen - portable to other AVR chips, use inline functions
  *  Modified again, June 2014 by Paul Stoffregen - support Teensy 3.x & even more AVR chips
- *
+ *  
  *
  *  This is free software. You can redistribute it and/or modify it under
- *  the terms of Creative Commons Attribution 3.0 United States License.
- *  To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/us/
+ *  the terms of Creative Commons Attribution 3.0 United States License. 
+ *  To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/us/ 
  *  or send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
  *
  */
@@ -45,7 +45,7 @@ class TimerOne
     //****************************
     void initialize(unsigned long microseconds=1000000) __attribute__((always_inline)) {
 	TCCR1B = _BV(WGM13);        // set mode as phase and frequency correct pwm, stop the timer
-	TCCR1A = 0;                 // clear control register A
+	TCCR1A = 0;                 // clear control register A 
 	setPeriod(microseconds);
     }
     void setPeriod(unsigned long microseconds) __attribute__((always_inline)) {
@@ -293,3 +293,4 @@ class TimerOne
 extern TimerOne Timer1;
 
 #endif
+
