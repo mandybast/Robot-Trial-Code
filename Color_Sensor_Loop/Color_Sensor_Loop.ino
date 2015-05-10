@@ -20,6 +20,10 @@ int   g_count = 0;    // count the frequecy
 int   g_array[3];     // store the RGB value
 int   g_flag = 0;     // filter of RGB queue
 float g_SF[3];        // save the RGB Scale factor
+int color = 0;
+int green = 1;
+int brown = 2;
+int yellow = 3;
  
  
 // Init TSC230 and setting Frequency.
@@ -112,8 +116,11 @@ void setup()
   g_SF[1] = 255.0/ g_array[1] ;    //G Scale factor
   g_SF[2] = 255.0/ g_array[2] ;    //B Scale factor
  
+  Serial.print("-> Scale Factor R=");
   Serial.println(g_SF[0]);
+  Serial.print("-> Scale Factor G=");
   Serial.println(g_SF[1]);
+  Serial.print("-> Scale Factor B=");
   Serial.println(g_SF[2]);
  
 }
@@ -123,6 +130,32 @@ void loop()
    g_flag = 0;
    for(int i=0; i<3; i++)
     Serial.println(int(g_array[i] * g_SF[i]));
-   delay(4000);
+
+
+ if(g_array[0] < 625 && g_array[0] > 310 && g_array[1] < 438 && g_array[1]>231 && g_array[2]<401 && g_array[2]>196  ) //These are the ranges of RGB freqencies that occur for the color brown
+ {
+   color = brown;
+   Serial.println(" - Brown Plant ");
+
+ }
+ else if(g_array[0] < 584 && g_array[0] > 439 && g_array[1] < 399 && g_array[1]>331 && g_array[2]<425 && g_array[2]>333 ) //These are the ranges of RGB freqencies that occur for the color green
+ {
+      color = green;
+   Serial.println(" - Green Plant ");
+ }
  
+  else if(g_array[0] < 625 && g_array[0] > 310 && g_array[1] < 438 && g_array[1]>231 && g_array[2]<401 && g_array[2]>196 ) //These are the ranges of RGB freqencies that occur for the color yellow
+ {
+      color = yellow;
+   Serial.println(" - Yellow Plant ");     
+ }
+ 
+ else //if none of the values are within a plant color range  the main loop of the program keeps going
+ 
+ {
+   color = 0;
+    Serial.println("  - No Plant "); 
+} 
+
+ delay(4000);
 }
