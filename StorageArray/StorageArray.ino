@@ -105,10 +105,10 @@ void TSC_WB(int Level0, int Level1)      //White Balance
 }
 
 //Plant height measurement loop 
-int trigPin1 = 10;
-int echoPin1 = 9;
-int trigPin2 = 8;
-int echoPin2 = 7;
+int trigPin1 = 24;
+int echoPin1 = 22;
+int trigPin2 = 28;
+int echoPin2 = 26;
 float v = 331.5+0.6*20; // m/s
 
 boolean TallPlant = false;
