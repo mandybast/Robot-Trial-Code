@@ -1,6 +1,11 @@
 #include "AFMotor.h" //for motors
 #include "TimerOne.h" //for color sensor
+#include <Servo.h> //for claw motors
 
+
+ 
+Servo GripMotor;  // create servo objects to control a servo 
+Servo WristMotor;   
 
 AF_DCMotor leftWheel(1);
 AF_DCMotor rightWheel(2);
@@ -8,6 +13,33 @@ int leftSensor = 0;
 int middleSensor = 1;
 int rightSensor = 2;
 int count=0;
+
+ 
+//COLOR SENSOR LOOP
+/***************
+Arduino UNO                                Color Sensor
+Digital 6                 -                     S0
+Digital 5                 -                     S1  
+Digital 4                 -                    S2
+Digital 3                 -                     S3
+Digital 2                 -                     OUT
+VCC                      -                     VCC
+GND                      -                    GND*/
+ 
+#define S0     6   // Please notice the Pin's define
+#define S1     5
+#define S2     4
+#define S3     3
+#define OUT    2
+ 
+int   g_count = 0;    // count the frequecy
+int   g_array[3];     // store the RGB value
+int   g_flag = 0;     // filter of RGB queue
+float g_SF[3];        // save the RGB Scale factor
+int color = 0;
+int green = 1;
+int brown = 2;
+int yellow = 3;
 
 void setup() {
   Serial.begin(115200);
@@ -49,32 +81,7 @@ void setup() {
 }
 
 
- 
-//COLOR SENSOR LOOP
-/***************
-Arduino UNO                                Color Sensor
-Digital 6                 -                     S0
-Digital 5                 -                     S1  
-Digital 4                 -                    S2
-Digital 3                 -                     S3
-Digital 2                 -                     OUT
-VCC                      -                     VCC
-GND                      -                    GND*/
- 
-#define S0     6   // Please notice the Pin's define
-#define S1     5
-#define S2     4
-#define S3     3
-#define OUT    2
- 
-int   g_count = 0;    // count the frequecy
-int   g_array[3];     // store the RGB value
-int   g_flag = 0;     // filter of RGB queue
-float g_SF[3];        // save the RGB Scale factor
-int color = 0;
-int green = 1;
-int brown = 2;
-int yellow = 3;
+
  
 
 //initial declaration so it can be called anywhere
@@ -144,7 +151,35 @@ void TSC_Callback()
          break;
   }
 }
+
+void GrabThePlant()
+{
+  int pos = 35;    // variable to store the servo position 
+
+void setup() 
+{ 
+  GripMotor.attach(10);  // attaches the servo on pin 10 to the servo object 
+  WristMotor.attach(9);  // attaches the servo on pin 9 to the servo object 
+} 
  
+void loop() 
+{ 
+  for(pos = 35; pos <= 180; pos += 1) // goes from 0 degrees to 180 degrees 
+  {                                  // in steps of 1 degree 
+    GripMotor.write(pos);              // tell servo to go to position in variable 'pos' 
+    delay(15);       // waits 15ms for the servo to reach the position
+    WristMotor.write(pos);  
+    delay(15);       // waits 15ms for the servo to reach the position
+  } 
+  for(pos = 180; pos>=35; pos-=1)     // goes from 180 degrees to 0 degrees 
+  {                                
+    GripMotor.write(pos);              // tell servo to go to position in variable 'pos' 
+    delay(15);                       // waits 15ms for the servo to reach the position 
+    WristMotor.write(pos);  
+    delay(15);       // waits 15ms for the servo to reach the position
+  } 
+} 
+}
 void TSC_WB(int Level0, int Level1)      //White Balance
 {
   g_count = 0;
@@ -165,13 +200,13 @@ void ShouldIGetThePlant(boolean Tall, boolean Short, int Color)
         {
           Serial.println("Found a new tall green plant");
           array[TallGreen] = 1; // I now have this plant
-         // GrabThePlant();
+          GrabThePlant();
         }
         else if(Short && array[ShortGreen] == 0)//if I dont have a tall green plant and this is one
         {
           Serial.println("Found a new short green plant");
           array[ShortGreen] = 1; // I now have this plant
-          //GrabThePlant();
+          GrabThePlant();
         }
         else
         {
@@ -185,13 +220,13 @@ void ShouldIGetThePlant(boolean Tall, boolean Short, int Color)
         {
           Serial.println("Found a new tall brown plant");
           array[TallBrown] = 1; // I now have this plant
-         // GrabThePlant();
+         GrabThePlant();
         }
         else if(Short && array[ShortBrown] == 0)//if I dont have a tall Brown plant and this is one
         {
           Serial.println("Found a new short brown plant");
           array[ShortBrown] = 1; // I now have this plant
-         // GrabThePlant();
+         GrabThePlant();
         }
         else
         {
@@ -204,13 +239,13 @@ void ShouldIGetThePlant(boolean Tall, boolean Short, int Color)
         {
           Serial.println("Found a new tall yellow plant");
           array[TallYellow] = 1; // I now have this plant
-         // GrabThePlant();
+         GrabThePlant();
         }
         else if(Short && array[ShortYellow] == 0)//if I dont have a tall yellow plant and this is one
         {
           Serial.println("Found a new short yellow plant");
           array[ShortYellow] = 1; // I now have this plant
-          //GrabThePlant();
+          GrabThePlant();
         }
         else
         {
@@ -232,10 +267,10 @@ void ShouldIGetThePlant(boolean Tall, boolean Short, int Color)
 }
 
 //Plant height measurement loop 
-int trigPin1 = 10;
-int echoPin1 = 9;
-int trigPin2 = 8;
-int echoPin2 = 7;
+int trigPin1 = 24;
+int echoPin1 = 22;
+int trigPin2 = 28;
+int echoPin2 = 26;
 float v = 331.5+0.6*20; // m/s
 
 boolean TallPlant = false;
@@ -294,7 +329,7 @@ int isdisttInRange(float distt)
 
 void loop() 
 {  //LINE FOLLOW LOOP
-  void secondloop(); //run color sensor loop at the same time
+  void secondloop(); //run color sensor and ultrasonic sensor loops at the same time
   
   int leftValue = digitalRead(leftSensor);
   int middleValue = digitalRead(middleSensor);
@@ -573,12 +608,6 @@ void secondloop ()
  ShouldIGetThePlant(TallPlant, ShortPlant, color);
   delay(200); //ms
 }
-
-
- 
-
- 
- 
 
 
 
