@@ -1,8 +1,8 @@
 //Plant height measurement loop 
-int trigPin1 = 8;
-int echoPin1 = 7;
-int trigPin2 = 6;
-int echoPin2 = 5;
+int trigPin1 = 24;
+int echoPin1 = 22;
+int trigPin2 = 28;
+int echoPin2 = 26;
 float v = 331.5+0.6*20; // m/s
 
 boolean TallPlant = false;
