@@ -24,6 +24,19 @@ int color = 0;
 int green = 1;
 int brown = 2;
 int yellow = 3;
+int greenR = 208;
+int greenG = 251;
+int greenB = 279;
+int yellowR = 1038;
+int yellowG = 813;
+int yellowB = 421;
+int brownR = 148;
+int brownG = 125;
+int brownB = 158;
+int groundR = 162;
+int groundG = 192;
+int groundB = 256;
+
  
  
 // Init TSC230 and setting Frequency.
@@ -125,37 +138,50 @@ void setup()
  
 }
  
+int getDiff(int RO,int GO,int BO,int RC,int GC,int BC)
+{
+  int Rdiff = abs(RO - RC);
+  int Gdiff = abs(GO - GC);
+  int Bdiff = abs(BO - BC);
+  
+  return Rdiff + Gdiff + Bdiff;
+}
 void loop()
 {
    g_flag = 0;
    for(int i=0; i<3; i++)
     Serial.println(int(g_array[i] * g_SF[i]));
 
-
- if(g_array[0] < 625 && g_array[0] > 310 && g_array[1] < 438 && g_array[1]>231 && g_array[2]<401 && g_array[2]>196  ) //These are the ranges of RGB freqencies that occur for the color brown
- {
-   color = brown;
-   Serial.println(" - Brown Plant ");
-
- }
- else if(g_array[0] < 584 && g_array[0] > 439 && g_array[1] < 399 && g_array[1]>331 && g_array[2]<425 && g_array[2]>333 ) //These are the ranges of RGB freqencies that occur for the color green
- {
-      color = green;
-   Serial.println(" - Green Plant ");
- }
- 
-  else if(g_array[0] < 625 && g_array[0] > 310 && g_array[1] < 438 && g_array[1]>231 && g_array[2]<401 && g_array[2]>196 ) //These are the ranges of RGB freqencies that occur for the color yellow
- {
-      color = yellow;
-   Serial.println(" - Yellow Plant ");     
- }
- 
+  int yellowDiff = getDiff(g_array[0], g_array[1], g_array[2], yellowR, yellowG, yellowB);
+  int greenDiff = getDiff(g_array[0], g_array[1], g_array[2], greenR, greenG, greenB);
+  int brownDiff = getDiff(g_array[0], g_array[1], g_array[2], brownR, brownG, brownB);
+  int groundDiff = getDiff(g_array[0], g_array[1], g_array[2], groundR, groundG, groundB);
+  
+  if(min(min(min(yellowDiff,greenDiff),brownDiff),groundDiff) == groundDiff) //none of the values are within a plant color range  the main loop of the program keeps going
+  {
+   color = 0;
+    Serial.println("  - Ground Detected"); 
+  }
+  else if(min(min(min(yellowDiff,greenDiff),brownDiff),groundDiff) == yellowDiff)
+  {
+     color = yellow;
+     Serial.println(" - Yellow Plant ");  
+  }
+  else if(min(min(min(yellowDiff,greenDiff),brownDiff),groundDiff) == greenDiff)
+  {
+     color = yellow;
+     Serial.println(" - Green Plant ");  
+  }
+  else if(min(min(min(yellowDiff,greenDiff),brownDiff),groundDiff) == brownDiff)
+  {
+     color = yellow;
+     Serial.println(" - Brown Plant ");  
+  }
  else //if none of the values are within a plant color range  the main loop of the program keeps going
- 
  {
    color = 0;
-    Serial.println("  - No Plant "); 
-} 
+    Serial.println("  - No Plant or Ground"); 
+  } 
 
  delay(4000);
 }
